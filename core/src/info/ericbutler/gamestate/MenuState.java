@@ -12,6 +12,7 @@ import com.badlogic.gdx.math.Rectangle;
 
 import dungeondigger.DungeonDigger;
 import dungeondigger.g2d.MenuOption;
+import dungeondigger.tools.References;
 
 public class MenuState extends GameState implements InputProcessor {
 	SpriteBatch						batch;
@@ -38,7 +39,9 @@ public class MenuState extends GameState implements InputProcessor {
 	}
 
 	@Override
-	public void update( float dt ) {}
+	public void update( float dt ) {
+
+	}
 
 	@Override
 	public void draw() {
@@ -47,6 +50,7 @@ public class MenuState extends GameState implements InputProcessor {
 		titleFont.draw( batch, "Vessels of Strife", 100, DungeonDigger.SCREEN_HEIGHT - 50 );
 		regularFont.draw( batch, "Wandering without Gods", 250, DungeonDigger.SCREEN_HEIGHT - 100 );
 		startGame.draw( batch );
+		regularFont.draw( batch, References.BUILD_NUMBER, 350, 35 );
 
 		batch.end();
 	}

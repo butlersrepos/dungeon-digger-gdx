@@ -1,5 +1,6 @@
 package info.ericbutler.gamestate;
 
+
 public class PlayState extends GameState {
 
 	protected PlayState( GameStateManager gsm ) {
@@ -11,14 +12,10 @@ public class PlayState extends GameState {
 	public void init() {}
 
 	@Override
-	public void update( float dt ) {
-		System.out.println( "play state updating" );
-	}
+	public void update( float dt ) {}
 
 	@Override
-	public void draw() {
-		System.out.println( "play state drawing" );
-	}
+	public void draw() {}
 
 	@Override
 	public void handleInput() {}

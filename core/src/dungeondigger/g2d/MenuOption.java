@@ -1,5 +1,7 @@
 package dungeondigger.g2d;
 
+import info.ericbutler.gamestate.GameStateManager;
+
 import com.badlogic.gdx.InputAdapter;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
@@ -32,13 +34,6 @@ public class MenuOption extends InputAdapter {
 		area = r;
 	}
 
-	@Override
-	public boolean mouseMoved( int screenX, int screenY ) {
-		int translatedY = DungeonDigger.SCREEN_HEIGHT - screenY;
-		isMouseOver = area.contains( screenX, translatedY );
-		return true;
-	}
-
 	public void draw( Batch batch ) {
 		BitmapFont fontToUse = font;
 		if( highlightFont != null && isMouseOver ) {
@@ -46,5 +41,21 @@ public class MenuOption extends InputAdapter {
 		}
 
 		fontToUse.draw( batch, text, area.x, area.y );
+	}
+
+	@Override
+	public boolean touchDown( int screenX, int screenY, int pointer, int button ) {
+		int translatedY = DungeonDigger.SCREEN_HEIGHT - screenY;
+		if( button == 0 && area.contains( screenX, translatedY ) ) {
+			DungeonDigger.GAMESTATEMANAGER.setState( GameStateManager.PLAY );
+		}
+		return true;
+	}
+
+	@Override
+	public boolean mouseMoved( int screenX, int screenY ) {
+		int translatedY = DungeonDigger.SCREEN_HEIGHT - screenY;
+		isMouseOver = area.contains( screenX, translatedY );
+		return true;
 	}
 }

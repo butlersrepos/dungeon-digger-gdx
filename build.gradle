@@ -104,6 +104,7 @@ project(":core") {
         compile "com.kotcrab.vis:vis-ui:0.6.1"
         compile "com.badlogicgames.box2dlights:box2dlights:$box2DLightsVersion"
         compile "com.badlogicgames.ashley:ashley:$ashleyVersion"
+		compile 'com.google.code.gson:gson:2.3.1'
     }
 }
 

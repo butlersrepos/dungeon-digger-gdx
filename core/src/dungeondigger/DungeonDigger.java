@@ -15,19 +15,19 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import dungeondigger.tools.References;
 
 public class DungeonDigger extends ApplicationAdapter {
-	SpriteBatch					batch;
-	Texture						img;
-	private GameStateManager	gsm;
-	OrthographicCamera			camera;
-	public static int			SCREEN_WIDTH	= 768;
-	public static int			SCREEN_HEIGHT	= 512;
+	public static GameStateManager	GAMESTATEMANAGER;
+	public static int				SCREEN_WIDTH	= 768;
+	public static int				SCREEN_HEIGHT	= 512;
+	SpriteBatch						batch;
+	Texture							img;
+	OrthographicCamera				camera;
 
 	@Override
 	public void create() {
 		importSettings();
 
 		batch = new SpriteBatch();
-		gsm = new GameStateManager();
+		GAMESTATEMANAGER = new GameStateManager();
 		camera = new OrthographicCamera( SCREEN_WIDTH, SCREEN_HEIGHT );
 		camera.setToOrtho( true, SCREEN_WIDTH, SCREEN_HEIGHT );
 
@@ -39,8 +39,8 @@ public class DungeonDigger extends ApplicationAdapter {
 		Gdx.gl.glClear( GL20.GL_COLOR_BUFFER_BIT );
 		batch.begin();
 
-		gsm.update( Gdx.graphics.getDeltaTime() );
-		gsm.draw();
+		GAMESTATEMANAGER.update( Gdx.graphics.getDeltaTime() );
+		GAMESTATEMANAGER.draw();
 
 		batch.end();
 	}
