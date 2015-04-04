@@ -1,5 +1,6 @@
 package info.ericbutler.gamestate;
 
+import dungeondigger.environment.DungeonGenerator;
 
 public class PlayState extends GameState {
 
@@ -9,7 +10,9 @@ public class PlayState extends GameState {
 	}
 
 	@Override
-	public void init() {}
+	public void init() {
+		DungeonGenerator.generateDungeon();
+	}
 
 	@Override
 	public void update( float dt ) {}

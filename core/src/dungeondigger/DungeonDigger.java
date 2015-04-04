@@ -71,7 +71,7 @@ public class DungeonDigger extends ApplicationAdapter {
 
 	public static void loadImages() {
 		// Models
-		References.IMAGES.put( "dwarf1", new Texture( Gdx.files.internal( "dwarf1.png" ) ) );// new Image( "dwarf1.png", new Color( 255, 0, 255 ) ) );
+		References.IMAGES.put( "dwarf1", new Texture( Gdx.files.internal( "dwarf1.png" ) ) );
 		References.IMAGES.put( "engy", new Texture( Gdx.files.internal( "engy.png" ) ) );
 		// Terrain
 		References.IMAGES.put( "FLOOR1", new Texture( Gdx.files.internal( "terrain/planetcute/dirt_floor_80x135.png" ) ) );
