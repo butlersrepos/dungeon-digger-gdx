@@ -35,7 +35,15 @@ allprojects {
 project(":desktop") {
     apply plugin: "java"
 
-
+	configurations {
+		provided
+	}
+	
+	sourceSets {
+		main {
+			compileClasspath += configurations.provided
+		}
+	}
     dependencies {
         compile project(":core")
         compile "com.badlogicgames.gdx:gdx-backend-lwjgl:$gdxVersion"
@@ -46,6 +54,7 @@ project(":desktop") {
         compile "com.badlogicgames.gdx:gdx-controllers-desktop:$gdxVersion"
         compile "com.badlogicgames.gdx:gdx-controllers-platform:$gdxVersion:natives-desktop"
         compile "com.badlogicgames.gdx:gdx-tools:$gdxVersion"
+		provided "org.projectlombok:lombok:1.16.2"
     }
 }
 
@@ -91,8 +100,7 @@ project(":html") {
 
 project(":core") {
     apply plugin: "java"
-
-
+	
     dependencies {
         compile "com.badlogicgames.gdx:gdx:$gdxVersion"
         compile "com.badlogicgames.gdx:gdx-box2d:$gdxVersion"
@@ -105,6 +113,7 @@ project(":core") {
         compile "com.badlogicgames.box2dlights:box2dlights:$box2DLightsVersion"
         compile "com.badlogicgames.ashley:ashley:$ashleyVersion"
 		compile 'com.google.code.gson:gson:2.3.1'
+		compile group: 'com.google.guava', name: 'guava', version: '12.0'
 		testCompile "junit:junit:+"
     }
 }
