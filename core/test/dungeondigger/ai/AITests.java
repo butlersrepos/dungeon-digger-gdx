@@ -31,7 +31,7 @@ public class AITests {
 						.observedEntities( new HashMap<String, List<Vector2>>() ).build() )
 				.race( Race.builder().appetite( new Appetite() )
 						.intelligence( new Intelligence() ).build() )
-				.location( new Vector2( 10, 10 ) )
+				.myLocation( new Vector2( 10, 10 ) )
 				.isDead( false )
 				.build();
 		orc1.brain.observe( "apple", Vector2.Zero );
@@ -55,7 +55,7 @@ public class AITests {
 						.observedEntities( new HashMap<String, List<Vector2>>() ).build() )
 				.race( Race.builder().appetite( new Appetite() )
 						.intelligence( new Intelligence() ).build() )
-				.location( new Vector2( 10, 10 ) )
+				.myLocation( new Vector2( 10, 10 ) )
 				.isDead( false )
 				.build();
 

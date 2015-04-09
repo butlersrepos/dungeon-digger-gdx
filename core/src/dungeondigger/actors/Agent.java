@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Map;
 
 import lombok.Builder;
+import lombok.extern.slf4j.Slf4j;
 
 import com.badlogic.gdx.math.Vector2;
 
@@ -13,11 +14,12 @@ import dungeondigger.ai.Brain;
 import dungeondigger.ai.Definitions;
 import dungeondigger.ai.Objective;
 
+@Slf4j
 @Builder
 public class Agent implements Updating {
 	public Brain	brain;
 	Race			race;
-	Vector2			location	= new Vector2();
+	Vector2			myLocation	= new Vector2();
 	boolean			isDead		= false;
 
 	public void update( float dt ) {
@@ -36,34 +38,34 @@ public class Agent implements Updating {
 	}
 
 	public void think( float dt ) {
-		System.out.println( "Orc thinking..." );
+		log.info( "Agent thinking..." );
 		// check for objectives
 		for( Objective objective : brain.goals ) {
-			System.out.println( "Orc try to solve: " + objective.title );
+			log.info( "Agent try to solve: {}", objective.title );
 			// see if doable
 			for( String requirement : objective.requirements ) {
-				System.out.println( "\tfor " + objective.title + " orc need " + requirement );
+				log.info( "\tfor {} agent need {}", objective.title, requirement );
 
 				ArrayList<Vector2> verifiedLocs = new ArrayList<Vector2>();
 				for( Map.Entry<String, List<Vector2>> seen : brain.observedEntities.entrySet() ) {
-					System.out.println( "\tOrc has seen a " + seen.getKey() );
+					log.info( "\tAgent has seen a {}", seen.getKey() );
 					if( Definitions.ENTITY_CATALOG.get( seen.getKey() ).contains( requirement ) ) {
 						String locs = "";
 						for( Vector2 v : seen.getValue() ) {
 							verifiedLocs.add( v );
 							locs += "(" + v.x + ", " + v.y + ") and ";
 						}
-						System.out.println( "\t\t" + seen.getKey() + " is a " + requirement + "! I saw one at " + locs.substring( 0, locs.length() - 4 ) );
+						log.info( "\t\t{} is a {}! I saw one at {}", seen.getKey(), requirement, locs.substring( 0, locs.length() - 4 ) );
 
 					} else {
-						System.out.println( "\t\t" + seen.getKey() + " is NOT a " + requirement );
+						log.info( "\t\t{} is NOT a {}", seen.getKey(), requirement );
 					}
 				}
 
 				if( verifiedLocs.size() == 0 ) {
-					System.out.println( "Orc has never seen anything to satisfy requirement:[" + requirement + "] of objective:[" + objective.title + "]. Ignoring objective." );
+					log.info( "Agent has never seen anything to satisfy requirement:[{}] of objective:[{}]. Ignoring objective.", requirement, objective.title );
 				} else {
-					Vector2 target = brain.computeEasiestGoal( verifiedLocs );
+					Vector2 target = brain.computeEasiestGoal( myLocation, verifiedLocs );
 				}
 			}
 		}
@@ -85,7 +87,7 @@ public class Agent implements Updating {
 	}
 
 	public void die() {
-		System.out.println( "Agent died!" );
+		log.info( "Agent died!" );
 		isDead = true;
 	}
 }
