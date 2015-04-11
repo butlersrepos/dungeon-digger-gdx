@@ -1,27 +1,33 @@
 package dungeondigger.actors;
 
-import java.util.ArrayList;
+import static java.lang.Math.signum;
+import static java.util.stream.Collectors.toList;
+
+import java.util.Comparator;
 import java.util.List;
-import java.util.Map;
+import java.util.Optional;
+import java.util.function.Predicate;
 
 import lombok.Builder;
+import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 
 import com.badlogic.gdx.math.Vector2;
 
 import dungeondigger.ai.Brain;
 import dungeondigger.ai.Objective;
+import dungeondigger.ai.Observation;
 import dungeondigger.ai.Requirement;
-import dungeondigger.taxonomy.Entities;
 import dungeondigger.taxonomy.Objectives;
 
 @Slf4j
+@Data
 @Builder
 public class Agent implements Updating {
-	public Brain	brain;
-	Race			race;
-	Vector2			myLocation	= new Vector2();
-	boolean			isDead		= false;
+	private Brain	brain;
+	private Race	race;
+	private Vector2	myLocation	= new Vector2();
+	private boolean	isDead		= false;
 
 	public void update( float dt ) {
 		if( isDead ) { return; }
@@ -41,33 +47,23 @@ public class Agent implements Updating {
 	public void think( float dt ) {
 		log.info( "Agent thinking..." );
 		// check for objectives
-		for( Objective objective : brain.goals ) {
+		for( Objective objective : brain.getGoals() ) {
 			log.info( "Agent try to solve: {}", objective.title );
 			// see if doable
 			for( Requirement req : objective.getRequirements() ) {
 				log.info( "\tfor {} agent need {}", objective.title, req );
 
-				ArrayList<Vector2> verifiedLocs = new ArrayList<Vector2>();
-				for( Map.Entry<String, List<Vector2>> seen : brain.observedEntities.entrySet() ) {
-					log.info( "\tAgent has seen a {}", seen.getKey() );
-					if( Entities.get( seen.getKey() ).isA( req.getTarget() ) ) {
-						String locs = "";
-						for( Vector2 v : seen.getValue() ) {
-							verifiedLocs.add( v );
-							locs += "(" + v.x + ", " + v.y + ") and ";
-						}
-						log.info( "\t\t{} is a {}! I saw one at {}", seen.getKey(), req, locs.substring( 0, locs.length() - 4 ) );
+				Predicate<? super Observation> entityTraitMatchFilter = ( p ) -> p.getEntity().getTraits().contains( req.getTarget() );
+				Comparator<? super Observation> observationDistanceSort = ( one, two ) -> ( int ) ( signum( one.getLocation().dst2( myLocation ) - two.getLocation().dst2( myLocation ) ) );
 
-					} else {
-						log.info( "\t\t{} is NOT a {}", seen.getKey(), req );
-					}
-				}
+				List<Observation> useableTargets = brain.getObservations().stream()
+						.filter( entityTraitMatchFilter )
+						.collect( toList() );
 
-				if( verifiedLocs.size() == 0 ) {
+				if( useableTargets.size() == 0 ) {
 					log.info( "Agent has never seen anything to satisfy requirement:[{}] of objective:[{}]. Ignoring objective.", req, objective.title );
-				} else {
-					Vector2 target = brain.computeEasiestGoal( myLocation, verifiedLocs );
 				}
+				Optional<Observation> bestTarget = getBrain().computeEasiestGoal( myLocation, useableTargets );
 			}
 		}
 		// evaluate action choice

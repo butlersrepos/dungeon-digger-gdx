@@ -1,29 +1,44 @@
 package dungeondigger.ai;
 
+import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
-import java.util.HashMap;
 import java.util.List;
+import java.util.Optional;
 import java.util.function.BinaryOperator;
+import java.util.stream.Collectors;
 
 import lombok.Builder;
+import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 
 import com.badlogic.gdx.math.Vector2;
 
+import dungeondigger.taxonomy.Entity;
+
 @Slf4j
+@Data
 @Builder
 public class Brain {
-	public HashMap<String, List<Vector2>>	observedEntities	= new HashMap<String, List<Vector2>>();
-	public ArrayList<Objective>				goals				= new ArrayList<Objective>();
+	private List<Observation>								observations		= new ArrayList<>();
+	private List<Objective>									goals				= new ArrayList<>();
+	private final static Comparator<? super Observation>	entityIdSort		= ( one, two ) -> ( int ) ( one.getEntity().getId() - two.getEntity().getId() );
+	private final static Comparator<? super Observation>	observationTimeSort	= ( one, two ) -> ( int ) ( two.getTime() - one.getTime() );
 
-	public void observe( String e, Vector2 loc ) {
-		if( observedEntities.get( e ) == null ) {
-			observedEntities.put( e, new ArrayList<Vector2>() );
-		}
-		List<Vector2> locs = observedEntities.get( e );
-		locs.add( loc.cpy() );
+	public void observe( Entity e, Vector2 loc ) {
+		long time = Instant.now().toEpochMilli();
+		Observation newest = Observation.builder().entity( e.copy() ).location( loc.cpy() ).time( time ).build();
+		observations.add( newest );
+		curateObservations();
+	}
+
+	protected void curateObservations() {
+		observations = observations.stream()
+				.sorted( entityIdSort )
+				.sorted( observationTimeSort )
+				.distinct()
+				.collect( Collectors.toList() );
 	}
 
 	public void addObjective( Objective o ) {
@@ -43,16 +58,8 @@ public class Brain {
 		} );
 	}
 
-	public Vector2 computeEasiestGoal( Vector2 start, ArrayList<Vector2> locs ) {
-		return locs.stream().reduce( locs.get( 0 ), vector2DistanceReduce( start ) );
-	}
-
-	private BinaryOperator<Vector2> vector2DistanceReduce( Vector2 start ) {
-		return new BinaryOperator<Vector2>() {
-			@Override
-			public Vector2 apply( Vector2 t, Vector2 u ) {
-				return start.dst2( t ) < start.dst2( u ) ? t : u;
-			}
-		};
+	public Optional<Observation> computeEasiestGoal( Vector2 startLoc, List<Observation> destLocs ) {
+		BinaryOperator<Observation> closestObservationReducer = ( a, b ) -> startLoc.dst2( a.getLocation() ) < startLoc.dst2( b.getLocation() ) ? a : b;
+		return destLocs.stream().reduce( closestObservationReducer );
 	}
 }

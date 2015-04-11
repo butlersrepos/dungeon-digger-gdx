@@ -10,7 +10,7 @@ import lombok.experimental.Wither;
 
 @Data
 @Builder
-public class Objective implements Cloneable {
+public class Objective {
 	@Wither
 	public String				title;
 	@Singular
@@ -31,8 +31,7 @@ public class Objective implements Cloneable {
 	public boolean equals( Object o ) {
 		if( this == o ) return true;
 		if( !( o instanceof Objective ) ) return false;
-		if( getTitle().equalsIgnoreCase( ( ( Objective ) o ).getTitle() ) ) return true;
-		return false;
+		return getTitle().equalsIgnoreCase( ( ( Objective ) o ).getTitle() );
 	}
 
 	@Override
