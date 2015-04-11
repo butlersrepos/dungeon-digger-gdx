@@ -7,6 +7,7 @@ import java.io.File;
 import com.badlogic.gdx.ApplicationAdapter;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
+import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
@@ -16,6 +17,7 @@ import dungeondigger.tools.References;
 
 public class DungeonDigger extends ApplicationAdapter {
 	public static GameStateManager	GAMESTATEMANAGER;
+	public static AssetManager		assetManager;
 	public static int				SCREEN_WIDTH	= 768;
 	public static int				SCREEN_HEIGHT	= 512;
 	SpriteBatch						batch;
@@ -24,6 +26,7 @@ public class DungeonDigger extends ApplicationAdapter {
 
 	@Override
 	public void create() {
+		assetManager = new AssetManager();
 		importSettings();
 
 		batch = new SpriteBatch();

@@ -1,7 +1,6 @@
 package dungeondigger.actors;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
@@ -11,8 +10,10 @@ import lombok.extern.slf4j.Slf4j;
 import com.badlogic.gdx.math.Vector2;
 
 import dungeondigger.ai.Brain;
-import dungeondigger.ai.Definitions;
 import dungeondigger.ai.Objective;
+import dungeondigger.ai.Requirement;
+import dungeondigger.taxonomy.Entities;
+import dungeondigger.taxonomy.Objectives;
 
 @Slf4j
 @Builder
@@ -43,27 +44,27 @@ public class Agent implements Updating {
 		for( Objective objective : brain.goals ) {
 			log.info( "Agent try to solve: {}", objective.title );
 			// see if doable
-			for( String requirement : objective.requirements ) {
-				log.info( "\tfor {} agent need {}", objective.title, requirement );
+			for( Requirement req : objective.getRequirements() ) {
+				log.info( "\tfor {} agent need {}", objective.title, req );
 
 				ArrayList<Vector2> verifiedLocs = new ArrayList<Vector2>();
 				for( Map.Entry<String, List<Vector2>> seen : brain.observedEntities.entrySet() ) {
 					log.info( "\tAgent has seen a {}", seen.getKey() );
-					if( Definitions.ENTITY_CATALOG.get( seen.getKey() ).contains( requirement ) ) {
+					if( Entities.get( seen.getKey() ).isA( req.getTarget() ) ) {
 						String locs = "";
 						for( Vector2 v : seen.getValue() ) {
 							verifiedLocs.add( v );
 							locs += "(" + v.x + ", " + v.y + ") and ";
 						}
-						log.info( "\t\t{} is a {}! I saw one at {}", seen.getKey(), requirement, locs.substring( 0, locs.length() - 4 ) );
+						log.info( "\t\t{} is a {}! I saw one at {}", seen.getKey(), req, locs.substring( 0, locs.length() - 4 ) );
 
 					} else {
-						log.info( "\t\t{} is NOT a {}", seen.getKey(), requirement );
+						log.info( "\t\t{} is NOT a {}", seen.getKey(), req );
 					}
 				}
 
 				if( verifiedLocs.size() == 0 ) {
-					log.info( "Agent has never seen anything to satisfy requirement:[{}] of objective:[{}]. Ignoring objective.", requirement, objective.title );
+					log.info( "Agent has never seen anything to satisfy requirement:[{}] of objective:[{}]. Ignoring objective.", req, objective.title );
 				} else {
 					Vector2 target = brain.computeEasiestGoal( myLocation, verifiedLocs );
 				}
@@ -78,10 +79,8 @@ public class Agent implements Updating {
 			die();
 		}
 		if( race.appetite.hunger <= race.appetite.hungryAt ) {
-			Objective food = new Objective();
-			food.title = "FOOD!";
-			food.requirements = new ArrayList<String>( Arrays.asList( "food" ) );
-			food.priorityLevel = ( int ) Math.ceil( race.appetite.hunger / 100 );
+			Objective food = Objectives.get( "food" );
+			food.setPriorityLevel( ( int ) Math.ceil( race.appetite.hunger / 100 ) );
 			brain.addObjective( food );
 		}
 	}

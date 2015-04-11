@@ -5,6 +5,8 @@ sourceCompatibility = 1.8
 
 sourceSets.main.java.srcDirs = [ "src/"]
 sourceSets.test.java.srcDirs = [ "test/"]
+
 eclipse.project {
     name = appName + "-core"
+    linkedResource name: 'assets', type: '2', location: 'WORKSPACE_LOC/dungeondiggergdx/android/assets'
 }
