@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<map version="1.0" orientation="orthogonal" renderorder="right-down" width="40" height="32" tilewidth="32" tileheight="32" nextobjectid="26">
+ <tileset firstgid="1" name="tileset" tilewidth="32" tileheight="32">
+  <image source="../lost-garden/tileset.png" width="512" height="512"/>
+ </tileset>
+ <layer name="ground" width="40" height="32">
+  <data encoding="base64" compression="zlib">
+   eJztlUEOQDAQRXtDbsDBcAKsSbDmVkZiEpkY05U/i1m8/DatRZ/ftEgplUThNCuidpxoP+Ev/HnwFP7C3585ZTADvewZHGB/8z3XQPaP/TRES3Ri7KF/l7+eGIhRjL34W4iV2MSY9/E5NA5jXfK8ezlpwefQsNbf9u/i26+04P/s4a14puxfnXBdfEv0/Y33N/yxP7QjLdkf2pGW7M+Dq+hf9M9joh1ZeQJpUee7
+  </data>
+ </layer>
+ <layer name="decorative" width="40" height="32">
+  <data encoding="base64" compression="zlib">
+   eJzFV7sSAjEIvP//L7Vx7NRG7dRKO7VzxI5hSFgel9sZumOXsJjgNNViRbGm2BTzVunvKQ4Ux2EV9fVlvVeKG8Xd4Knos8Yh9WW9L4o3xcfgruizxiH10X5JRPO8HL1+9Txs5Xl8R71qAfWQ19TKQev2nA/1kNfUykHP6plrtP+8plYOetaKuZZAzsG/mXuus4jcTVoOUvPWXV3MQy3Hemv+OClc1rki94qWY701LYx6w71vzRP8bi5Yvnwb3y25syHaXr/PIK+GXUBb87un/wB5NVwAbQltLiz9qhmO7iCWfna3yaJaf+n/TRYiu2A1etyRXRDlRtHrUWQXRLlRVPyms/uph7tylrS6s/weTyJaWc89nnAttNas5547lGuhfRn5RnCtpfY/FLzWHy8JIBI=
+  </data>
+ </layer>
+ <objectgroup name="collisions">
+  <object id="18" x="890" y="455" width="38" height="56"/>
+  <object id="20" x="600" y="393" width="38" height="56"/>
+  <object id="21" x="770" y="422" width="38" height="56"/>
+  <object id="22" x="1119" y="479" width="37" height="32"/>
+  <object id="23" x="1023.5" y="382" width="32" height="31"/>
+  <object id="24" x="895" y="574.5" width="32" height="31"/>
+  <object id="25" x="416" y="576.5" width="32" height="31"/>
+ </objectgroup>
+</map>

@@ -1,7 +1,5 @@
 package dungeondigger;
 
-import info.ericbutler.gamestate.GameStateManager;
-
 import java.io.File;
 
 import com.badlogic.gdx.ApplicationAdapter;
@@ -13,6 +11,7 @@ import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 
+import dungeondigger.gamestate.GameStateManager;
 import dungeondigger.tools.References;
 
 public class DungeonDigger extends ApplicationAdapter {

@@ -1,6 +1,8 @@
-package info.ericbutler.gamestate;
+package dungeondigger.gamestate;
 
-public abstract class GameState {
+import com.badlogic.gdx.InputAdapter;
+
+public abstract class GameState extends InputAdapter {
 	protected GameStateManager	gsm;
 
 	protected GameState( GameStateManager gsm ) {
@@ -12,8 +14,6 @@ public abstract class GameState {
 	public abstract void update( float dt );
 
 	public abstract void draw();
-
-	public abstract void handleInput();
 
 	public abstract void dispose();
 }

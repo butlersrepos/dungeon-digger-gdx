@@ -1,8 +1,7 @@
-package info.ericbutler.gamestate;
+package dungeondigger.gamestate;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.InputMultiplexer;
-import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
@@ -14,7 +13,7 @@ import dungeondigger.DungeonDigger;
 import dungeondigger.g2d.MenuOption;
 import dungeondigger.tools.References;
 
-public class MenuState extends GameState implements InputProcessor {
+public class MenuState extends GameState {
 	SpriteBatch						batch;
 	BitmapFont						regularFont;
 	BitmapFont						titleFont;
@@ -95,49 +94,6 @@ public class MenuState extends GameState implements InputProcessor {
 		highlightedOptionFont = generator.generateFont( parameter );
 		generator.dispose(); // don't forget to dispose to avoid memory leaks!
 	}
-
-	@Override
-	public boolean keyDown( int keycode ) {
-		return false;
-	}
-
-	@Override
-	public boolean keyUp( int keycode ) {
-		return false;
-	}
-
-	@Override
-	public boolean keyTyped( char character ) {
-		return false;
-	}
-
-	@Override
-	public boolean touchDown( int screenX, int screenY, int pointer, int button ) {
-		return false;
-	}
-
-	@Override
-	public boolean touchUp( int screenX, int screenY, int pointer, int button ) {
-		return false;
-	}
-
-	@Override
-	public boolean touchDragged( int screenX, int screenY, int pointer ) {
-		return false;
-	}
-
-	@Override
-	public boolean mouseMoved( int screenX, int screenY ) {
-		return false;
-	}
-
-	@Override
-	public boolean scrolled( int amount ) {
-		return false;
-	}
-
-	@Override
-	public void handleInput() {}
 
 	@Override
 	public void dispose() {}

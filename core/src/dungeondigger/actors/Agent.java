@@ -16,9 +16,9 @@ import com.badlogic.gdx.math.Vector2;
 
 import dungeondigger.ai.Brain;
 import dungeondigger.ai.Objective;
+import dungeondigger.ai.Objectives;
 import dungeondigger.ai.Observation;
 import dungeondigger.ai.Requirement;
-import dungeondigger.taxonomy.Objectives;
 
 @Slf4j
 @Data

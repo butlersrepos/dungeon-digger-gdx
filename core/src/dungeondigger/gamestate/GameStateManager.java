@@ -1,4 +1,4 @@
-package info.ericbutler.gamestate;
+package dungeondigger.gamestate;
 
 public class GameStateManager {
 	private GameState	gameState;

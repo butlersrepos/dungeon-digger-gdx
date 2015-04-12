@@ -1,4 +1,4 @@
-package dungeondigger.taxonomy;
+package dungeondigger.ai;
 
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
@@ -7,6 +7,7 @@ import static org.junit.Assert.assertTrue;
 import org.junit.Test;
 
 import dungeondigger.ai.Objective;
+import dungeondigger.ai.Objectives;
 
 public class ObjectivesTest {
 

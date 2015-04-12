@@ -1,11 +1,9 @@
-package dungeondigger.taxonomy;
+package dungeondigger.ai;
 
 import java.util.HashMap;
 import java.util.Optional;
 
-import dungeondigger.ai.Action;
-import dungeondigger.ai.Objective;
-import dungeondigger.ai.Requirement;
+import dungeondigger.taxonomy.Aspects;
 
 public class Objectives {
 	private static HashMap<String, Objective>	OBJECTIVES	= new HashMap<>();

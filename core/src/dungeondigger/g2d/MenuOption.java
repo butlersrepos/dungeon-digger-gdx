@@ -1,13 +1,12 @@
 package dungeondigger.g2d;
 
-import info.ericbutler.gamestate.GameStateManager;
-
 import com.badlogic.gdx.InputAdapter;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.math.Rectangle;
 
 import dungeondigger.DungeonDigger;
+import dungeondigger.gamestate.GameStateManager;
 
 public class MenuOption extends InputAdapter {
 	public boolean		isMouseOver	= false;
