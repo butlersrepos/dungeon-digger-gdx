@@ -16,4 +16,6 @@ public abstract class GameState extends InputAdapter {
 	public abstract void draw();
 
 	public abstract void dispose();
+
+	public void resize( int width, int height ) {}
 }

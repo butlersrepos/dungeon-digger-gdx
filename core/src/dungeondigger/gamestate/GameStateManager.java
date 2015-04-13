@@ -30,4 +30,8 @@ public class GameStateManager {
 	public void draw() {
 		gameState.draw();
 	}
+
+	public void dispose() {
+		gameState.dispose();
+	}
 }

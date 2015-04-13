@@ -10,6 +10,8 @@ public class DesktopLauncher {
 		LwjglApplicationConfiguration config = new LwjglApplicationConfiguration();
 
 		config.resizable = false;
+		config.height = DungeonDigger.SCREEN_HEIGHT;
+		config.width = DungeonDigger.SCREEN_WIDTH;
 
 		new LwjglApplication( new DungeonDigger(), config );
 	}

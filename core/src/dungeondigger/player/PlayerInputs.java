@@ -18,19 +18,19 @@ public class PlayerInputs extends InputAdapter {
 	public boolean keyDown( int keycode ) {
 		log.info( "Key: {} pressed down", Keys.toString( keycode ) );
 
-		if( keycode == Input.Keys.LEFT ) {
+		if( keycode == Input.Keys.A ) {
 			playerState.setMoveLeft( true );
 			return true;
 		}
-		if( keycode == Input.Keys.RIGHT ) {
+		if( keycode == Input.Keys.D ) {
 			playerState.setMoveRight( true );
 			return true;
 		}
-		if( keycode == Input.Keys.UP ) {
+		if( keycode == Input.Keys.W ) {
 			playerState.setMoveUp( true );
 			return true;
 		}
-		if( keycode == Input.Keys.DOWN ) {
+		if( keycode == Input.Keys.S ) {
 			playerState.setMoveDown( true );
 			return true;
 		}
@@ -40,19 +40,19 @@ public class PlayerInputs extends InputAdapter {
 
 	@Override
 	public boolean keyUp( int keycode ) {
-		if( keycode == Input.Keys.LEFT ) {
+		if( keycode == Input.Keys.A ) {
 			playerState.setMoveLeft( false );
 			return true;
 		}
-		if( keycode == Input.Keys.RIGHT ) {
+		if( keycode == Input.Keys.D ) {
 			playerState.setMoveRight( false );
 			return true;
 		}
-		if( keycode == Input.Keys.UP ) {
+		if( keycode == Input.Keys.W ) {
 			playerState.setMoveUp( false );
 			return true;
 		}
-		if( keycode == Input.Keys.DOWN ) {
+		if( keycode == Input.Keys.S ) {
 			playerState.setMoveDown( false );
 			return true;
 		}

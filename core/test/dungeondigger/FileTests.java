@@ -7,6 +7,7 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.files.FileHandle;
 
 public class FileTests {
+
 	@Test
 	@Ignore
 	public void tryDirectory() throws Exception {

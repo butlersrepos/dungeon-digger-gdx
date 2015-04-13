@@ -1,36 +1,39 @@
 package dungeondigger.gamestate;
 
+import static com.badlogic.gdx.Gdx.gl;
+import static com.badlogic.gdx.Gdx.graphics;
+import static dungeondigger.Assets.manager;
+import static dungeondigger.tools.References.BACKGROUND_LAYER_NAME;
+import static dungeondigger.tools.References.FOREGROUND_LAYER_NAME;
+import lombok.extern.slf4j.Slf4j;
+
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.InputMultiplexer;
-import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
-import com.badlogic.gdx.graphics.Texture;
-import com.badlogic.gdx.graphics.g2d.Animation.PlayMode;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.maps.tiled.TiledMap;
-import com.badlogic.gdx.maps.tiled.TmxMapLoader;
+import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
 import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
 
-import dungeondigger.g2d.SmartAnimation;
+import dungeondigger.g2d.ActorAnimationSets;
+import dungeondigger.player.PlayerRenderer;
 import dungeondigger.player.PlayerState;
+import dungeondigger.ui.MenuElements;
 
+@Slf4j
 public class PlayState extends GameState {
-	public static int					LPC_CHAR_FRAME_WIDTH	= 64;
-	public static int					LPC_CHAR_FRAME_HEIGHT	= 64;
-	public static int					LPC_WALK_LEFT_ROW		= 11;
-
-	private SmartAnimation				walkAnim;
 	private SpriteBatch					batch;
-	private TextureRegion[][]			tmp;
 	private PlayerState					playerState;
+	private PlayerRenderer				player;
 	private InputMultiplexer			playStateInputMultiplexer;
+
 	private TiledMap					tiledMap;
 	private OrthogonalTiledMapRenderer	tiledMapRenderer;
 	private OrthographicCamera			camera;
-	private AssetManager				assetManager;
+	private TiledMapTileLayer			backgroundLayer;
+	private TiledMapTileLayer			foregroundLayer;
 
 	protected PlayState( GameStateManager gsm ) {
 		super( gsm );
@@ -40,37 +43,31 @@ public class PlayState extends GameState {
 	@Override
 	public void init() {
 		batch = new SpriteBatch();
-
-		loadDarkElf();
-
-		// DungeonGenerator.generateDungeon();
-
-		// assetManager = new AssetManager( new InternalFileHandleResolver() );
-		// assetManager.setLoader( TiledMap.class, new TmxMapLoader( new InternalFileHandleResolver() ) );
-		// assetManager.load( "terrain/maps/first-try.tmx", TiledMap.class );
-		// assetManager.finishLoading();
-
+		setupPlayer();
 		setupMap();
 		setupInputs();
 	}
 
+	private void setupPlayer() {
+		playerState = new PlayerState();
+		player = playerState.getPlayerRenderer();
+		player.setAnimationSet( ActorAnimationSets.get( "darkelf-spearman" ) );
+	}
+
 	private void setupMap() {
-
-		float w = Gdx.graphics.getWidth();
-		float h = Gdx.graphics.getHeight();
-
 		camera = new OrthographicCamera();
-		camera.setToOrtho( false, w, h );
+		camera.setToOrtho( false, graphics.getWidth(), ( float ) graphics.getHeight() );
 		camera.update();
 
-		tiledMap = new TmxMapLoader().load( "terrain/maps/first-try.tmx" );
-		tiledMapRenderer = new OrthogonalTiledMapRenderer( tiledMap );
+		manager.finishLoadingAsset( "terrain/maps/first-try.tmx" );
+		tiledMap = manager.get( "terrain/maps/first-try.tmx", TiledMap.class );
+		tiledMapRenderer = new OrthogonalTiledMapRenderer( tiledMap, batch );
+		backgroundLayer = ( TiledMapTileLayer ) tiledMap.getLayers().get( BACKGROUND_LAYER_NAME );
+		foregroundLayer = ( TiledMapTileLayer ) tiledMap.getLayers().get( FOREGROUND_LAYER_NAME );
 	}
 
 	private void setupInputs() {
 		playStateInputMultiplexer = new InputMultiplexer();
-		playerState = new PlayerState();
-		// Controller definers
 		playStateInputMultiplexer.addProcessor( playerState.getController() );
 		playStateInputMultiplexer.addProcessor( this );
 		Gdx.input.setInputProcessor( playStateInputMultiplexer );
@@ -78,43 +75,36 @@ public class PlayState extends GameState {
 
 	@Override
 	public void update( float dt ) {
-		walkAnim.update( dt );
 		playerState.update( dt );
 	}
 
 	@Override
 	public void draw() {
-		Gdx.gl.glClearColor( 0.066f, 0.066f, 0.066f, 1 );
-		Gdx.gl.glClear( GL20.GL_COLOR_BUFFER_BIT );
+		gl.glClearColor( 0.066f, 0.066f, 0.066f, 1 );
+		gl.glClear( GL20.GL_COLOR_BUFFER_BIT );
 
-		// TODO variablize these
-		camera.position.set( playerState.getXPos() + 32, playerState.getYPos(), 0 );
-		camera.update();
-
-		// TODO render trees on top of player
+		centerCameraOnPlayer();
 		tiledMapRenderer.setView( camera );
-		tiledMapRenderer.render();
 
-		// TODO methodize this?
 		batch.setProjectionMatrix( camera.combined );
 		batch.begin();
-		batch.draw( walkAnim.getKeyFrame(), playerState.getXPos(), playerState.getYPos() );
+
+		tiledMapRenderer.renderTileLayer( backgroundLayer );
+		// Render characters here
+		player.draw( batch );
+		tiledMapRenderer.renderTileLayer( foregroundLayer );
+
+		MenuElements.regularFont.draw( batch, playerState.getDirection().toString(), camera.position.x, camera.position.y );
 		batch.end();
+	}
+
+	private void centerCameraOnPlayer() {
+		camera.position.set( playerState.getXPos() + 32, playerState.getYPos(), 0 );
+		camera.update();
 	}
 
 	@Override
 	public void dispose() {}
-
-	private void loadDarkElf() {
-		Texture deSheet = new Texture( Gdx.files.internal( "darkelf-spearman.png" ) );
-		tmp = TextureRegion.split( deSheet, LPC_CHAR_FRAME_WIDTH, LPC_CHAR_FRAME_HEIGHT );
-		TextureRegion[] walkFrames = new TextureRegion[9];
-		for( int i = 0; i < 9; i++ ) {
-			walkFrames[i] = tmp[LPC_WALK_LEFT_ROW][i];
-		}
-		walkAnim = new SmartAnimation( 0.1f, walkFrames );
-		walkAnim.setPlayMode( PlayMode.LOOP );
-	}
 
 	@Override
 	public boolean keyDown( int keycode ) {

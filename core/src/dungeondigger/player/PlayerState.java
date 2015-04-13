@@ -1,34 +1,48 @@
 package dungeondigger.player;
 
+import static dungeondigger.environment.Constants.friction;
 import lombok.Data;
 
-import com.badlogic.gdx.physics.box2d.Body;
+import com.badlogic.gdx.math.Vector2;
+
+import dungeondigger.actors.ActionState;
+import dungeondigger.taxonomy.FourDirection;
 
 @Data
 public class PlayerState {
-	// TODO add sprite animations in here
-	PlayerInputs	controller	= new PlayerInputs( this );
-	Body			body;
-	float			xPos		= 0f;
-	float			yPos		= 0f;
+	PlayerInputs	controller		= new PlayerInputs( this );
+	PlayerRenderer	playerRenderer	= new PlayerRenderer( this );
 
-	float			xSpeed		= 0f;
-	float			ySpeed		= 0f;
+	ActionState		actionState		= ActionState.WALKING;
+	FourDirection	direction		= FourDirection.NORTH;
 
-	float			accel		= 50f;
-	float			friction	= -10f;
-	float			maxSpeed	= 100f;
+	float			xPos			= 0f;
+	float			yPos			= 0f;
 
-	int				denom		= 50;
+	float			xSpeed			= 0f;
+	float			ySpeed			= 0f;
+
+	float			accel			= 140f;
+	float			maxSpeed		= 200f;
+
 	boolean			moveLeft, moveRight, moveUp, moveDown;
 
 	public void update( float dt ) {
-		// System.out.println( "ySpeed: " + ySpeed );
-		// System.out.println( "xSpeed: " + xSpeed );
-		accel = 140f;
-		friction = -10f;
-		maxSpeed = 200f;
+		updateMovement( dt );
+		direction = FourDirection.valueOf( new Vector2( xSpeed, ySpeed ).angle( Vector2.Y ) );
+		updateActionState();
+		playerRenderer.update( dt );
+	}
 
+	private void updateActionState() {
+		if( xSpeed != 0f || ySpeed != 0f ) {
+			actionState = ActionState.WALKING;
+		} else {
+
+		}
+	}
+
+	private void updateMovement( float dt ) {
 		updatePosition( dt );
 		updateXSpeed( dt );
 		updateYSpeed( dt );
@@ -44,11 +58,11 @@ public class PlayerState {
 		ySpeed -= ( moveDown ? accel * dt : 0 );
 
 		if( ySpeed > 0 ) {
-			if( !moveUp ) ySpeed += friction;
+			if( !moveUp ) ySpeed += friction * dt;
 			ySpeed = highestBounded( ySpeed, 0, maxSpeed );
 		}
 		if( ySpeed < 0 ) {
-			if( !moveDown ) ySpeed -= friction;
+			if( !moveDown ) ySpeed -= friction * dt;
 			ySpeed = lowestBounded( ySpeed, 0, -maxSpeed );
 		}
 	}
@@ -58,11 +72,11 @@ public class PlayerState {
 		xSpeed -= ( moveLeft ? accel * dt : 0 );
 
 		if( xSpeed > 0 ) {
-			if( !moveRight ) xSpeed += friction;
+			if( !moveRight ) xSpeed += friction * dt;
 			xSpeed = highestBounded( xSpeed, 0, maxSpeed );
 		}
 		if( xSpeed < 0 ) {
-			if( !moveLeft ) xSpeed -= friction;
+			if( !moveLeft ) xSpeed -= friction * dt;
 			xSpeed = lowestBounded( xSpeed, 0, -maxSpeed );
 		}
 	}

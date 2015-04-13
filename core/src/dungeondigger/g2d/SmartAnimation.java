@@ -30,7 +30,13 @@ public class SmartAnimation extends Animation {
 	 *            the {@link TextureRegion}s representing the frames. */
 	public SmartAnimation( float[] frameDurations, TextureRegion[] keyFrames ) {
 		super( 0f, keyFrames );
-		if( frameDurations.length != keyFrames.length ) { throw new IllegalArgumentException( "Number of frame durations must equal number of keyframes!" ); }
+
+		if( frameDurations.length != keyFrames.length && frameDurations.length != 1 ) { throw new IllegalArgumentException( "Number of frame durations must equal number of keyframes!" ); }
+		if( frameDurations.length == 1 ) {
+			float[] tmp = frameDurations;
+			frameDurations = new float[keyFrames.length];
+			Arrays.fill( frameDurations, tmp[0] );
+		}
 		this.frameDurations = frameDurations;
 		smartMode = true;
 	}
@@ -103,7 +109,12 @@ public class SmartAnimation extends Animation {
 				frameNumber = keyFrames.length - frameNumber - 1;
 				break;
 		}
+		System.out.println( "statetime: " + stateTime );
 		System.out.println( "Frame number: " + frameNumber );
 		return frameNumber;
+	}
+
+	public float[] getFrameDurations() {
+		return frameDurations;
 	}
 }

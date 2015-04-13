@@ -1,28 +1,21 @@
 package dungeondigger.gamestate;
 
-import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.InputMultiplexer;
-import com.badlogic.gdx.graphics.Color;
-import com.badlogic.gdx.graphics.g2d.BitmapFont;
-import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator;
-import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator.FreeTypeFontParameter;
-import com.badlogic.gdx.math.Rectangle;
+import static dungeondigger.Assets.manager;
 
-import dungeondigger.DungeonDigger;
-import dungeondigger.g2d.MenuOption;
+import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.scenes.scene2d.Stage;
+import com.badlogic.gdx.scenes.scene2d.ui.Label;
+import com.badlogic.gdx.scenes.scene2d.ui.Table;
+import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
+import com.badlogic.gdx.scenes.scene2d.ui.Value;
+import com.badlogic.gdx.scenes.scene2d.utils.Align;
+
+import dungeondigger.SpriteResources;
 import dungeondigger.tools.References;
+import dungeondigger.ui.MenuElements;
 
 public class MenuState extends GameState {
-	SpriteBatch						batch;
-	BitmapFont						regularFont;
-	BitmapFont						titleFont;
-	BitmapFont						menuOptionFont;
-	BitmapFont						highlightedOptionFont;
-	private FreeTypeFontGenerator	generator;
-	private FreeTypeFontParameter	parameter;
-	MenuOption						startGame;
-	InputMultiplexer				m;
+	Stage	stage;
 
 	protected MenuState( GameStateManager gsm ) {
 		super( gsm );
@@ -31,70 +24,57 @@ public class MenuState extends GameState {
 
 	@Override
 	public void init() {
-		batch = new SpriteBatch();
-		generateFonts();
-		generateMenuEventAreas();
-		setupInputs();
+		SpriteResources.buildSprites();
+		setupUI();
+	}
+
+	private void setupUI() {
+		Table table = new Table();
+		table.setFillParent( true );
+		table.align( Align.top );
+
+		stage = new Stage();
+		stage.addActor( table );
+
+		Label titleLabel = MenuElements.createMenuTitle();
+		table.add( titleLabel ).expandX().left()
+				.padTop( Gdx.graphics.getHeight() * 0.05f )
+				.padLeft( Value.percentWidth( 0.25f ) );
+		table.row();
+
+		Label subTitleLabel = MenuElements.createMenuSubTitle();
+		table.add( subTitleLabel ).padTop( titleLabel.getHeight() * -0.3f );
+		table.row();
+
+		TextButton startButton = MenuElements.createStartMenuButton();
+		table.add( startButton ).padTop( Gdx.graphics.getHeight() * 0.33f );
+		table.row();
+
+		Label versionLabel = MenuElements.createMenuSubTitle( References.BUILD_NUMBER );
+		table.add( versionLabel ).expandX().expandY().bottom().right();
+		table.row();
+
+		Gdx.input.setInputProcessor( stage );
 	}
 
 	@Override
 	public void update( float dt ) {
-
+		manager.update();
 	}
 
 	@Override
 	public void draw() {
-		batch.begin();
-
-		titleFont.draw( batch, "Vessels of Strife", 100, DungeonDigger.SCREEN_HEIGHT - 50 );
-		regularFont.draw( batch, "Wandering without Gods", 250, DungeonDigger.SCREEN_HEIGHT - 100 );
-		startGame.draw( batch );
-		regularFont.draw( batch, References.BUILD_NUMBER, 350, 35 );
-
-		batch.end();
-	}
-
-	private void setupInputs() {
-		m = new InputMultiplexer();
-		m.addProcessor( startGame );
-		m.addProcessor( this );
-		Gdx.input.setInputProcessor( m );
-	}
-
-	private void generateMenuEventAreas() {
-		startGame = new MenuOption( menuOptionFont, "Begin Journey" );
-		startGame.highlightFont = highlightedOptionFont;
-		startGame.area = new Rectangle( 200,
-				DungeonDigger.SCREEN_HEIGHT - 350,
-				startGame.font.getBounds( startGame.text ).width,
-				startGame.font.getBounds( startGame.text ).height );
-	}
-
-	private void generateFonts() {
-		generator = new FreeTypeFontGenerator( Gdx.files.internal( "fonts/gothic-pixel.ttf" ) );
-		parameter = new FreeTypeFontParameter();
-
-		parameter.size = 36;
-		parameter.color = Color.WHITE;
-		regularFont = generator.generateFont( parameter ); // font size 12 pixels
-
-		parameter.color = Color.valueOf( "ddddddff" );
-		parameter.size = 72;
-		parameter.borderColor = Color.WHITE;
-		parameter.borderWidth = 2;
-		titleFont = generator.generateFont( parameter );
-
-		parameter.size = 48;
-		parameter.borderWidth = 1;
-		parameter.color = Color.valueOf( "0074D9FF" );
-		menuOptionFont = generator.generateFont( parameter );
-
-		parameter.borderColor = Color.valueOf( "ffdc00ff" );
-		parameter.borderWidth = 1.5f;
-		highlightedOptionFont = generator.generateFont( parameter );
-		generator.dispose(); // don't forget to dispose to avoid memory leaks!
+		stage.act( Math.min( Gdx.graphics.getDeltaTime(), 1 / 30f ) );
+		stage.draw();
 	}
 
 	@Override
-	public void dispose() {}
+	public void resize( int width, int height ) {
+		stage.getViewport().update( width, height, true );
+	}
+
+	@Override
+	public void dispose() {
+		stage.dispose();
+	}
 }
