@@ -1,6 +1,7 @@
 package dungeondigger.player;
 
-import static dungeondigger.environment.Constants.friction;
+import static dungeondigger.actors.ActionState.WALKING;
+import static dungeondigger.taxonomy.FourDirection.NORTH;
 import lombok.Data;
 
 import com.badlogic.gdx.math.Vector2;
@@ -10,82 +11,36 @@ import dungeondigger.taxonomy.FourDirection;
 
 @Data
 public class PlayerState {
-	PlayerInputs	controller		= new PlayerInputs( this );
-	PlayerRenderer	playerRenderer	= new PlayerRenderer( this );
+	protected PlayerInputs		controller	= new PlayerInputs( this );
+	protected PlayerRenderer	renderer	= new PlayerRenderer( this );
 
-	ActionState		actionState		= ActionState.WALKING;
-	FourDirection	direction		= FourDirection.NORTH;
+	protected ActionState		actionState	= WALKING;
+	protected FourDirection		direction	= NORTH;
 
-	float			xPos			= 0f;
-	float			yPos			= 0f;
+	protected Vector2			position	= new Vector2( 0f, 0f );
+	protected Movement2D		movements	= new Movement2D( 0f, 0f, 140f, 200f );
 
-	float			xSpeed			= 0f;
-	float			ySpeed			= 0f;
-
-	float			accel			= 140f;
-	float			maxSpeed		= 200f;
-
-	boolean			moveLeft, moveRight, moveUp, moveDown;
+	protected boolean			moveLeft, moveRight, moveUp, moveDown;
 
 	public void update( float dt ) {
-		updateMovement( dt );
-		direction = FourDirection.valueOf( new Vector2( xSpeed, ySpeed ).angle( Vector2.Y ) );
+		movements.update( this, dt );
+
+		updateDirection();
+
 		updateActionState();
-		playerRenderer.update( dt );
+
+		renderer.update( dt );
+	}
+
+	private void updateDirection() {
+		if( movements.xSpeed == 0f && movements.ySpeed == 0f ) { return; }
+		direction = FourDirection.valueOf( new Vector2( movements.xSpeed, movements.ySpeed ).angle( Vector2.Y ) );
 	}
 
 	private void updateActionState() {
-		if( xSpeed != 0f || ySpeed != 0f ) {
-			actionState = ActionState.WALKING;
-		} else {
-
+		actionState = ActionState.IDLING;
+		if( movements.xSpeed != 0f || movements.ySpeed != 0f ) {
+			actionState = WALKING;
 		}
-	}
-
-	private void updateMovement( float dt ) {
-		updatePosition( dt );
-		updateXSpeed( dt );
-		updateYSpeed( dt );
-	}
-
-	private void updatePosition( float dt ) {
-		xPos += ( xSpeed * dt );
-		yPos += ( ySpeed * dt );
-	}
-
-	private void updateYSpeed( float dt ) {
-		ySpeed += ( moveUp ? accel * dt : 0 );
-		ySpeed -= ( moveDown ? accel * dt : 0 );
-
-		if( ySpeed > 0 ) {
-			if( !moveUp ) ySpeed += friction * dt;
-			ySpeed = highestBounded( ySpeed, 0, maxSpeed );
-		}
-		if( ySpeed < 0 ) {
-			if( !moveDown ) ySpeed -= friction * dt;
-			ySpeed = lowestBounded( ySpeed, 0, -maxSpeed );
-		}
-	}
-
-	private void updateXSpeed( float dt ) {
-		xSpeed += ( moveRight ? accel * dt : 0 );
-		xSpeed -= ( moveLeft ? accel * dt : 0 );
-
-		if( xSpeed > 0 ) {
-			if( !moveRight ) xSpeed += friction * dt;
-			xSpeed = highestBounded( xSpeed, 0, maxSpeed );
-		}
-		if( xSpeed < 0 ) {
-			if( !moveLeft ) xSpeed -= friction * dt;
-			xSpeed = lowestBounded( xSpeed, 0, -maxSpeed );
-		}
-	}
-
-	float highestBounded( float a, float b, float bound ) {
-		return Math.min( Math.max( a, b ), bound );
-	}
-
-	float lowestBounded( float a, float b, float bound ) {
-		return Math.max( Math.min( a, b ), bound );
 	}
 }

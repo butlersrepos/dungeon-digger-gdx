@@ -50,7 +50,7 @@ public class PlayState extends GameState {
 
 	private void setupPlayer() {
 		playerState = new PlayerState();
-		player = playerState.getPlayerRenderer();
+		player = playerState.getRenderer();
 		player.setAnimationSet( ActorAnimationSets.get( "darkelf-spearman" ) );
 	}
 
@@ -99,7 +99,7 @@ public class PlayState extends GameState {
 	}
 
 	private void centerCameraOnPlayer() {
-		camera.position.set( playerState.getXPos() + 32, playerState.getYPos(), 0 );
+		camera.position.set( playerState.getPosition().x + 32, playerState.getPosition().y, 0 );
 		camera.update();
 	}
 

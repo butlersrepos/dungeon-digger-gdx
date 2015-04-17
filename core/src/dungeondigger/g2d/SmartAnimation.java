@@ -109,8 +109,6 @@ public class SmartAnimation extends Animation {
 				frameNumber = keyFrames.length - frameNumber - 1;
 				break;
 		}
-		System.out.println( "statetime: " + stateTime );
-		System.out.println( "Frame number: " + frameNumber );
 		return frameNumber;
 	}
 
