@@ -23,8 +23,8 @@ public class Movement2D {
 	}
 
 	private void updatePosition( PlayerState playerState, float dt ) {
-		playerState.position.x += ( xSpeed * dt );
-		playerState.position.y += ( ySpeed * dt );
+		playerState.getPosition().x += ( xSpeed * dt );
+		playerState.getPosition().y += ( ySpeed * dt );
 	}
 
 	private void updateXSpeed( PlayerState playerState, float dt ) {

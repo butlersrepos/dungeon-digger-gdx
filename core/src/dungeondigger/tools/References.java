@@ -15,6 +15,7 @@ public class References {
 	public static final String				START_BUTTON_TEXT		= "Begin Journey";
 	public static final String				FOREGROUND_LAYER_NAME	= "foreground";
 	public static final String				BACKGROUND_LAYER_NAME	= "ground";
+	public static final String				COLLISION_LAYER_NAME	= "collisions";
 	public static final int					LPC_CHAR_FRAME_WIDTH	= 64;
 	public static final int					LPC_CHAR_FRAME_HEIGHT	= 64;
 	public static final int					LPC_WALK_LEFT_ROW		= 11;

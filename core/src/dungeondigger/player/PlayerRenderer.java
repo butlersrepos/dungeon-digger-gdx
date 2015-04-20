@@ -30,6 +30,6 @@ public class PlayerRenderer {
 	public void draw( Batch batch ) {
 		batch.draw( currentAnimation.map( a -> a.getKeyFrame() )
 				.orElse( new TextureRegion( manager.get( "dwarf1.png" ) ) ),
-				playerState.position.x, playerState.position.y );
+				playerState.getPosition().x, playerState.getPosition().y );
 	}
 }

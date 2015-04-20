@@ -4,6 +4,7 @@ import static com.badlogic.gdx.Gdx.gl;
 import static com.badlogic.gdx.Gdx.graphics;
 import static dungeondigger.Assets.manager;
 import static dungeondigger.tools.References.BACKGROUND_LAYER_NAME;
+import static dungeondigger.tools.References.COLLISION_LAYER_NAME;
 import static dungeondigger.tools.References.FOREGROUND_LAYER_NAME;
 import lombok.extern.slf4j.Slf4j;
 
@@ -13,9 +14,18 @@ import com.badlogic.gdx.InputMultiplexer;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
+import com.badlogic.gdx.graphics.glutils.ShapeRenderer.ShapeType;
+import com.badlogic.gdx.maps.MapLayer;
+import com.badlogic.gdx.maps.MapObjects;
+import com.badlogic.gdx.maps.objects.RectangleMapObject;
 import com.badlogic.gdx.maps.tiled.TiledMap;
 import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
 import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
+import com.badlogic.gdx.math.Rectangle;
+import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.utils.Array;
+import com.badlogic.gdx.utils.Predicate;
 
 import dungeondigger.g2d.ActorAnimationSets;
 import dungeondigger.player.PlayerRenderer;
@@ -34,6 +44,9 @@ public class PlayState extends GameState {
 	private OrthographicCamera			camera;
 	private TiledMapTileLayer			backgroundLayer;
 	private TiledMapTileLayer			foregroundLayer;
+	private MapLayer					collisionLayer;
+
+	private ShapeRenderer				shapeRenderer;
 
 	protected PlayState( GameStateManager gsm ) {
 		super( gsm );
@@ -43,6 +56,7 @@ public class PlayState extends GameState {
 	@Override
 	public void init() {
 		batch = new SpriteBatch();
+		shapeRenderer = new ShapeRenderer();
 		setupPlayer();
 		setupMap();
 		setupInputs();
@@ -64,6 +78,7 @@ public class PlayState extends GameState {
 		tiledMapRenderer = new OrthogonalTiledMapRenderer( tiledMap, batch );
 		backgroundLayer = ( TiledMapTileLayer ) tiledMap.getLayers().get( BACKGROUND_LAYER_NAME );
 		foregroundLayer = ( TiledMapTileLayer ) tiledMap.getLayers().get( FOREGROUND_LAYER_NAME );
+		collisionLayer = tiledMap.getLayers().get( COLLISION_LAYER_NAME );
 	}
 
 	private void setupInputs() {
@@ -76,6 +91,27 @@ public class PlayState extends GameState {
 	@Override
 	public void update( float dt ) {
 		playerState.update( dt );
+
+		collisionDetection();
+
+		playerState.updateLastGoodPosition();
+	}
+
+	private void collisionDetection() {
+		MapObjects objects = collisionLayer.getObjects();
+		Array<RectangleMapObject> AllTheRectangles = objects.getByType( RectangleMapObject.class );
+
+		int checkDistance = 64;
+		Predicate<RectangleMapObject> rectanglesWithinXofPlayer = rmo -> rmo.getRectangle().getCenter( new Vector2() ).dst( playerState.getPosition() ) < checkDistance;
+		AllTheRectangles.select( rectanglesWithinXofPlayer )
+				.forEach( r -> checkCollisionWithPlayer( r.getRectangle() ) );
+	}
+
+	public void checkCollisionWithPlayer( Rectangle rectangle ) {
+		if( rectangle.overlaps( playerState.getBounds() ) ) {
+			log.warn( "Collision detected, restoring last known good position!" );
+			playerState.restoreLastGoodPosition();
+		}
 	}
 
 	@Override
@@ -96,6 +132,16 @@ public class PlayState extends GameState {
 
 		MenuElements.regularFont.draw( batch, playerState.getDirection().toString(), camera.position.x, camera.position.y );
 		batch.end();
+
+		drawCollisionBoxes();
+	}
+
+	private void drawCollisionBoxes() {
+		shapeRenderer.setProjectionMatrix( camera.combined );
+		Rectangle playerHitbox = playerState.getBounds();
+		shapeRenderer.begin( ShapeType.Line );
+		shapeRenderer.rect( playerHitbox.x, playerHitbox.y, playerHitbox.width, playerHitbox.height );
+		shapeRenderer.end();
 	}
 
 	private void centerCameraOnPlayer() {
