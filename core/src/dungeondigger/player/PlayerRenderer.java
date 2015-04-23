@@ -6,6 +6,7 @@ import java.util.Optional;
 
 import lombok.Data;
 
+import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 
@@ -28,8 +29,7 @@ public class PlayerRenderer {
 	}
 
 	public void draw( Batch batch ) {
-		batch.draw( currentAnimation.map( a -> a.getKeyFrame() )
-				.orElse( new TextureRegion( manager.get( "dwarf1.png" ) ) ),
-				playerState.getPosition().x, playerState.getPosition().y );
+		TextureRegion drawnFrame = currentAnimation.map( a -> a.getKeyFrame() ).orElse( new TextureRegion( manager.get( "dwarf1.png", Texture.class ) ) );
+		batch.draw( drawnFrame, playerState.getPosition().x, playerState.getPosition().y );
 	}
 }
